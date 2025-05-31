@@ -9,10 +9,10 @@ export function getProxyImageUrl(
   // Encode the original URL to safely pass it as a query parameter
   const encodedUrl = encodeURIComponent(originalUrl);
   let proxyUrl = `/api/proxy-image?url=${encodedUrl}&quality=${quality}`;
-  
+
   if (maxWidth) proxyUrl += `&maxWidth=${maxWidth}`;
   if (maxHeight) proxyUrl += `&maxHeight=${maxHeight}`;
-  
+
   return proxyUrl;
 }
 

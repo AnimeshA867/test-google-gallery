@@ -49,7 +49,7 @@ export async function GET(request: NextRequest) {
         sharpInstance.resize({
           width: maxWidth > 0 ? maxWidth : undefined,
           height: maxHeight > 0 ? maxHeight : undefined,
-          fit: 'inside', // Maintain aspect ratio
+          fit: "inside", // Maintain aspect ratio
           withoutEnlargement: true, // Don't upscale smaller images
         });
       }
@@ -59,44 +59,54 @@ export async function GET(request: NextRequest) {
 
       if (metadata.format === "jpeg" || metadata.format === "jpg") {
         processedImageBuffer = await sharpInstance
-          .jpeg({ 
-            quality: validQuality, 
-            progressive: true, 
+          .jpeg({
+            quality: validQuality,
+            progressive: true,
             mozjpeg: true,
             optimizeScans: true,
-            optimizeCoding: true
+            optimizeCoding: true,
           })
           .toBuffer();
       } else if (metadata.format === "png") {
         // For very low quality, convert PNG to JPEG for better compression
         if (validQuality < 30) {
           processedImageBuffer = await sharpInstance
-            .jpeg({ 
-              quality: validQuality, 
-              progressive: true, 
+            .jpeg({
+              quality: validQuality,
+              progressive: true,
               mozjpeg: true,
               optimizeScans: true,
-              optimizeCoding: true
+              optimizeCoding: true,
             })
             .toBuffer();
         } else {
           processedImageBuffer = await sharpInstance
-            .png({ quality: validQuality, progressive: true, compressionLevel: 9, effort: 10 })
+            .png({
+              quality: validQuality,
+              progressive: true,
+              compressionLevel: 9,
+              effort: 10,
+            })
             .toBuffer();
         }
       } else if (metadata.format === "webp") {
         processedImageBuffer = await sharpInstance
-          .webp({ quality: validQuality, effort: 6, smartSubsample: true, nearLossless: false })
+          .webp({
+            quality: validQuality,
+            effort: 6,
+            smartSubsample: true,
+            nearLossless: false,
+          })
           .toBuffer();
       } else {
         // For other formats, convert to JPEG with quality compression
         processedImageBuffer = await sharpInstance
-          .jpeg({ 
-            quality: validQuality, 
-            progressive: true, 
+          .jpeg({
+            quality: validQuality,
+            progressive: true,
             mozjpeg: true,
             optimizeScans: true,
-            optimizeCoding: true
+            optimizeCoding: true,
           })
           .toBuffer();
       }
@@ -109,9 +119,7 @@ export async function GET(request: NextRequest) {
     return new NextResponse(new Uint8Array(processedImageBuffer), {
       headers: {
         "Content-Type": contentType,
-        "Cache-Control": `public, max-age=${
-          isCompress ? 86400 : 31536000
-        }`, // Shorter cache for compressed images
+        "Cache-Control": `public, max-age=${isCompress ? 86400 : 31536000}`, // Shorter cache for compressed images
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Methods": "GET",
         "Access-Control-Allow-Headers": "Content-Type",
